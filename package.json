@@ -13,7 +13,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "lint": "tslint-config-prettier-check ./tslint.json"
   },
   "repository": {
     "type": "git",
