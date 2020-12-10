@@ -1,0 +1,33 @@
+{
+  "name": "telegramwarden",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "prettier": "^2.2.1",
+    "telegraf": "^3.38.0",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typescript": "^4.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aqulasoft/TelegramWarden.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "typescrypt"
+  ],
+  "author": "aqulasoft",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/aqulasoft/TelegramWarden/issues"
+  },
+  "homepage": "https://github.com/aqulasoft/TelegramWarden#readme"
+}
