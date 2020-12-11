@@ -12,6 +12,7 @@ bot.use(async (ctx, next) => {
 
 const translatte = require('translatte');
 
+const reg = new RegExp(/^([^\s|]{1,5})\|\|(.+)/);
 
 bot.on('text', (ctx) => {
   console.log(
@@ -19,17 +20,36 @@ bot.on('text', (ctx) => {
   );
   console.log(ctx.message);
 
-  translatte(ctx.message.text, { to: process.env.TO_TRANSLATE })
-    .then((result) => {
-      console.log(result);
-      if (result.from.language.iso !== process.env.TO_TRANSLATE) {
+  const matches = reg.exec(ctx.message.text);
+  console.log(matches);
 
-        ctx.reply(`${result.from.language.iso}| ${result.text}`, {
-          reply_to_message_id: ctx.message_id,
-        });
-      }
-    })
-    .catch(console.error);
+  if (matches) {
+    translatte(matches[2], { to: matches[1] })
+      .then((result) => {
+        console.log(`translate to : ${matches[1]}`);
+        ctx.reply(
+          `${result.from.language.iso} => ${matches[1]}| ${result.text}`,
+          {
+            reply_to_message_id: ctx.message_id,
+          },
+        );
+      })
+      .catch(console.error);
+  } else {
+    translatte(ctx.message.text, { to: process.env.TO_TRANSLATE })
+      .then((result) => {
+        console.log(result);
+        if (result.from.language.iso !== process.env.TO_TRANSLATE) {
+          ctx.reply(
+            `${result.from.language.iso} => ${process.env.TO_TRANSLATE}| ${result.text}`,
+            {
+              reply_to_message_id: ctx.message_id,
+            },
+          );
+        }
+      })
+      .catch(console.error);
+  }
 });
 
 bot.launch();
