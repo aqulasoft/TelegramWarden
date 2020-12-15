@@ -41,4 +41,4 @@ jobs:
           deploy_path: /root/my-deployment
 #           stack_file_name: docker-compose.yaml
           keep_files: 5
-#           args: my_applicaion
+          args: twarden
