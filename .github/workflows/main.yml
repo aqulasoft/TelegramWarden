@@ -23,12 +23,14 @@ jobs:
       runs-on: ubuntu-latest
 #       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       # needs: test
+      outputs:
+        version: ${{ github.ref }}
       steps:
         - uses: actions/checkout@master
           
-        - run: echo '::set-env name=VERSION::${{ github.ref }}'
-        
-        - run: echo '::set-env name=VERSION::${{ github.event.inputs.version }}'
+#         - run: echo '::set-env name=VERSION::${{ github.ref }}'
+#         - run: echo '::set-env name=version::${{ github.event.inputs.version }}'
+        - run: echo "::set-output name=version::${{ github.event.inputs.version }}"
           if: ${{ github.event.inputs.version }}
         
         - name: Publish to Registry
@@ -45,8 +47,8 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
           with:
-            tag_name: ${{ env.VERSION }}
-            release_name: Release ${{ env.VERSION }}
+            tag_name: ${{ needs.deploy.outputs.version }}
+            release_name: Release ${{ needs.deploy.outputs.version }}
             # body: changelog
             draft: false
             prerelease: false
