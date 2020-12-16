@@ -60,7 +60,7 @@ jobs:
         - name: Copy folder content recursively to remote
           uses: garygrossgarten/github-action-scp@release
           with:
-            local: .
+            local: $GITHUB_WORKSPACE
             remote: ${{ secrets.REMOTE_TARGET }}
             host: ${{ secrets.DEPLOY_SERVER_HOST }}
             username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
