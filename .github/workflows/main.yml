@@ -44,6 +44,12 @@ jobs:
 
         - name: Check out the source
           run: pwd
+        
+        - name: Check out the source
+          run: |
+            cd ~/Projects/TelegramWarden
+            ${{ secrets.ENV }} >> ~/.env1
+        
 
         - name: Check out the source
           run: ssh staging 'cd ~/Projects/TelegramWarden && git fetch && git reset --hard origin/master'
