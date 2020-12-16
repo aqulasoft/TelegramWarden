@@ -8,7 +8,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.use(async (ctx, next) => {
   const start = new Date();
   await next();
-  const ms = new Date() - start;
+  const ms = new Date().getTime() - start.getTime();
   console.log('Response time: %sms', ms);
 });
 
