@@ -40,7 +40,15 @@
 
 # TelegramWarden
 
+### [TelegramWarden Docker Hub](https://hub.docker.com/repository/docker/aqulasoft/twarden)
 
-https://hub.docker.com/repository/docker/aqulasoft/twarden
+## Run manually
+```bash
+docker run --restart always -d --name twarden -p \
+    -e BOT_TOKEN="<BOT_TOKEN>" \
+    -e TO_TRANSLATE='<LANG_CODE>'
+```
 
-
+## Configuration
+- `BOT_TOKEN`: Telegram bot token
+- `TO_TRANSLATE`: ISO 639-1 Language code used for auto message translate
