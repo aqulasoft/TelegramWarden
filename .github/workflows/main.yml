@@ -51,7 +51,7 @@ jobs:
             host: ${{ secrets.DEPLOY_SERVER_HOST }}
             username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
             key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-            port: ${{ secrets.DEPLOY_SERVER_HOST }}
+            port: ${{ secrets.DEPLOY_SERVER_PORT }}
             script: |
               pwd
               whoami
