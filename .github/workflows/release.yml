@@ -69,7 +69,8 @@ jobs:
             port: ${{ secrets.DEPLOY_SERVER_PORT }}
             script: |
               docker ps
-              docker pull forichok/tgwarden
+              docker pull ${{ secrets.DOCKER_HUB_REPO }}
               docker stop twarden
               docker rm twarden 
               docker run --restart always -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -d --name twarden ${{ secrets.DOCKER_HUB_REPO }}
+              docker ps
