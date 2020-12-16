@@ -46,9 +46,7 @@ jobs:
           run: pwd
         
         - name: Check out the source
-          run: |
-            cd ~/Projects/TelegramWarden
-            ${{ secrets.ENV }} >> ~/.env1
+          run: ssh staging 'cd ~/Projects/TelegramWarden && ${{ secrets.ENV }} >> ~/.env1'
         
 
         - name: Check out the source
