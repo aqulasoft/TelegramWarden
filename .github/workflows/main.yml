@@ -15,21 +15,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-#     push_to_registry:
-#       name: Push Docker image to Docker Hub
-#       runs-on: ubuntu-latest
-#       steps:
-#         - name: Check out the repo
-#           uses: actions/checkout@v2
-#         - name: Push to Docker Hub
-#           uses: docker/build-push-action@v1
-#           with:
-#             username: ${{ secrets.DOCKER_USERNAME }}
-#             password: ${{ secrets.DOCKER_PASSWORD }}
-#             repository: forichok/tgwarden
-#             tag_with_ref: true
-   
     deploy:
       name: "Deploy to staging"
       runs-on: ubuntu-latest
@@ -76,18 +61,10 @@ jobs:
             key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
             port: ${{ secrets.DEPLOY_SERVER_PORT }}
             script: |
-              pwd
-              whoami
-              ls -al
-              
-        - name: Copy folder content recursively to remote
-          uses: garygrossgarten/github-action-scp@release
-          with:
-            local: $GITHUB_WORKSPACE
-            remote: ${{ secrets.REMOTE_TARGET }}
-            host: ${{ secrets.DEPLOY_SERVER_HOST }}
-            username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-            privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+              docker ps
+              docker stop twarden
+              docker run -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -d --name twarden forichok/tgwarden
+
 #              scp -r ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_PORT }}:${{ secrets.REMOTE_TARGET }} .
 #         - name: Deploy to Server
 #           uses: easingthemes/ssh-deploy@v2.1.5
