@@ -56,7 +56,16 @@ jobs:
               pwd
               whoami
               ls -al
-              scp -r ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_PORT }}:${{ secrets.REMOTE_TARGET }} .
+              
+        - name: Copy folder content recursively to remote
+          uses: garygrossgarten/github-action-scp@release
+          with:
+            local: .
+            remote: ${{ secrets.REMOTE_TARGET }}
+            host: ${{ secrets.DEPLOY_SERVER_HOST }}
+            username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+            privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+#              scp -r ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_PORT }}:${{ secrets.REMOTE_TARGET }} .
 #         - name: Deploy to Server
 #           uses: easingthemes/ssh-deploy@v2.1.5
 #           env:
