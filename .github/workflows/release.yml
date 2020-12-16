@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Release + Publish to hub.docker + deploy to VPS
 
 on:
   push:
@@ -14,32 +14,23 @@ on:
         description: 'Version'     
         required: true
 
-
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
     deploy:
-      name: "Deploy to staging"
+      name: "Release"
       runs-on: ubuntu-latest
-#       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-      # needs: test
       steps:
         - uses: actions/checkout@master
-          
-#         - run: echo '::set-env name=VERSION::${{ github.ref }}'
-#         - run: echo '::set-env name=version::${{ github.event.inputs.version }}'
-#         - run: echo "::set-output name=version::${{ github.event.inputs.version }}"
-#           if: ${{ github.event.inputs.version }}
         
-        - name: Publish to Registry
+        - name: Publish to Docker Hub
           uses: elgohr/Publish-Docker-Github-Action@master
           with:
-            name: forichok/tgwarden
+            name: ${{ secrets.DOCKER_HUB_REPO }}
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
-            tags: "latest"
+            tags: "latest, ${{ github.event.inputs.version || github.ref }}"
 
-        - name: Create Release
+        - name: Create GitHub Release
           id: create_release
           uses: actions/create-release@v1
           env:
@@ -67,14 +58,8 @@ jobs:
             SSH_USER: ${{ secrets.DEPLOY_SERVER_USERNAME }}
             SSH_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
             SSH_HOST: ${{ secrets.DEPLOY_SERVER_HOST }}
-
-        - name: Stop the server
-          run: ssh staging 'docker ps'
-
-        - name: Check out the source
-          run: pwd
           
-        - name: multiple command
+        - name: Deploy to docker container on VPS
           uses: appleboy/ssh-action@master
           with:
             host: ${{ secrets.DEPLOY_SERVER_HOST }}
@@ -86,26 +71,4 @@ jobs:
               docker pull forichok/tgwarden
               docker stop twarden
               docker rm twarden 
-              docker run --restart always -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -d --name twarden forichok/tgwarden
-
-#              scp -r ${{ secrets.DEPLOY_SERVER_USERNAME }}@${{ secrets.DEPLOY_SERVER_PORT }}:${{ secrets.REMOTE_TARGET }} .
-#         - name: Deploy to Server
-#           uses: easingthemes/ssh-deploy@v2.1.5
-#           env:
-#               SSH_PRIVATE_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-# #               ARGS: "-rltgoDzvO --delete"
-#               SOURCE: $GITHUB_WORKSPACE
-#               REMOTE_HOST: ${{ secrets.DEPLOY_SERVER_HOST }}
-#               REMOTE_USER: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-#               TARGET: ${{ secrets.REMOTE_TARGET }}
-        
-#         - name: Check out the source
-#           run: ssh staging 'cd ~/Projects/TelegramWarden && ${{ secrets.ENV }} >> ~/.env1'
-        
-
-#         - name: Check out the source
-#           run: ssh staging 'cd ~/Projects/TelegramWarden && git fetch && git reset --hard origin/master'
-
-#         - name: Start the server
-#           if: ${{ always() }}
-#           run: ssh staging 'sudo systemctl start my-application'
+              docker run --restart always -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -d --name twarden ${{ secrets.DOCKER_HUB_REPO }}
