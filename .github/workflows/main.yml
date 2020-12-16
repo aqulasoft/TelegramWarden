@@ -45,16 +45,26 @@ jobs:
         - name: Check out the source
           run: pwd
           
-          
-        - name: Deploy to Server
-          uses: easingthemes/ssh-deploy@v2.1.5
-          env:
-              SSH_PRIVATE_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-#               ARGS: "-rltgoDzvO --delete"
-              SOURCE: $GITHUB_WORKSPACE
-              REMOTE_HOST: ${{ secrets.DEPLOY_SERVER_HOST }}
-              REMOTE_USER: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-              TARGET: ${{ secrets.REMOTE_TARGET }}
+        - name: multiple command
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.DEPLOY_SERVER_HOST }}
+            username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+            key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+            port: ${{ secrets.DEPLOY_SERVER_HOST }}
+            script: |
+              pwd
+              whoami
+              ls -al
+#         - name: Deploy to Server
+#           uses: easingthemes/ssh-deploy@v2.1.5
+#           env:
+#               SSH_PRIVATE_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+# #               ARGS: "-rltgoDzvO --delete"
+#               SOURCE: $GITHUB_WORKSPACE
+#               REMOTE_HOST: ${{ secrets.DEPLOY_SERVER_HOST }}
+#               REMOTE_USER: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+#               TARGET: ${{ secrets.REMOTE_TARGET }}
         
 #         - name: Check out the source
 #           run: ssh staging 'cd ~/Projects/TelegramWarden && ${{ secrets.ENV }} >> ~/.env1'
