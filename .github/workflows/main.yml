@@ -42,8 +42,11 @@ jobs:
         - name: Stop the server
           run: ssh staging 'docker ps'
 
-#         - name: Check out the source
-#           run: ssh staging 'cd my-application && git fetch && git reset --hard origin/master'
+        - name: Check out the source
+          run: pwd
+
+        - name: Check out the source
+          run: ssh staging 'cd ~/Projects/TelegramWarden && git fetch && git reset --hard origin/master'
 
 #         - name: Start the server
 #           if: ${{ always() }}
