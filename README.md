@@ -49,7 +49,7 @@ docker run --restart always -d --name twarden -p \
 ## Configuration
 
 - `BOT_TOKEN`: Telegram bot token
-- `TO_TRANSLATE`: ISO 639-1 Language code used for auto message translate
+- `TO_TRANSLATE`: ISO 639-1 Language code used for auto message translate (Default: en)
 - `MAX_MSG_LENGTH`: Message max length (Default: 1000)
 - `DENY_URL`: Delete messages with links (Default: true)
 - `DENY_PHOTO`: Delete messages with photo (Default: true)
