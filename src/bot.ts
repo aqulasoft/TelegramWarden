@@ -1,8 +1,10 @@
 import { config } from 'dotenv';
 import translatte from 'translatte';
 import { Telegraf } from 'telegraf';
+import { containsUrl } from './utils/utils';
 
 config();
+
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(async (ctx, next) => {
@@ -14,7 +16,23 @@ bot.use(async (ctx, next) => {
 
 const reg = new RegExp(/^([^\s|]{1,5})\|\|(.+)/);
 
+bot.on('photo', (ctx) => {
+  if (ctx.message.chat.title && Boolean(process.env.DENY_PHOTO || 'true'))
+    ctx.deleteMessage(ctx.message.message_id);
+});
+
 bot.on('text', (ctx) => {
+  if (ctx.message.chat.title) {
+    const hasUrl =
+      Boolean(process.env.DENY_URL || 'true') && containsUrl(ctx.message.text);
+    const tooLong =
+      ctx.message.text.length > Number(process.env.MAX_MSG_LENGTH || '1000');
+    if (hasUrl || tooLong) {
+      ctx.deleteMessage(ctx.message.message_id);
+      return;
+    }
+  }
+
   console.log(
     `----------- new msg [${ctx.from.username} - ${ctx.chat.title}] -------------`,
   );
@@ -36,12 +54,13 @@ bot.on('text', (ctx) => {
       })
       .catch(console.error);
   } else {
-    translatte(ctx.message.text, { to: process.env.TO_TRANSLATE })
+    const lang = process.env.TO_TRANSLATE || 'en';
+    translatte(ctx.message.text, { to: lang })
       .then((result) => {
         console.log(result);
-        if (result.from.language.iso !== process.env.TO_TRANSLATE) {
+        if (result.from.language.iso !== lang) {
           ctx.reply(
-            `${result.from.language.iso} => ${process.env.TO_TRANSLATE}| ${result.text}`,
+            `${result.from.language.iso} => ${lang}| ${result.text}`,
             {
               reply_to_message_id: ctx.message.message_id,
             },
