@@ -43,8 +43,7 @@
 
 ```bash
 docker run --restart always -d --name twarden -p \
-    -e BOT_TOKEN="<BOT_TOKEN>" \
-    -e TO_TRANSLATE='<LANG_CODE>'
+    -e BOT_TOKEN='<BOT_TOKEN>' aqulasoft/twarden
 ```
 
 ## Configuration
