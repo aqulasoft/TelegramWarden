@@ -50,7 +50,7 @@ docker run --restart always -d --name twarden -p \
     -e DB_USERNAME='<username>' \
     -e DB_PASSWORD='<pass>' \
     -e DB_DATABASE='<dbname>' \
-    -e DB_SYNCHRONIZE=true \
+    -e DB_SYNCHRONIZE=false \
     -e DB_LOGGING=true \
     aqulasoft/twarden
 ```

@@ -7,22 +7,22 @@ import { TelegrafContext } from 'telegraf/typings/context';
 import 'reflect-metadata';
 
 config();
+const env = process.env;
 const reg = new RegExp(/^([^\s|]{1,5})\|\|(.+)/);
 
 async function onPhoto(ctx: TelegrafContext) {
-  if (ctx.message.chat.title && Boolean(process.env.DENY_PHOTO || 'true'))
+  if (ctx.message.chat.title && Boolean(env.DENY_PHOTO || 'true'))
     ctx.deleteMessage(ctx.message.message_id);
 }
 
 async function onText(ctx: TelegrafContext) {
-  await updateUser(ctx.message.from, ctx.message.chat);
-  if (ctx.message.chat.title) {
-    const hasUrl =
-      Boolean(process.env.DENY_URL || 'true') && containsUrl(ctx.message.text);
-    const tooLong =
-      ctx.message.text.length > Number(process.env.MAX_MSG_LENGTH || '1000');
+  const msg = ctx.message;
+  await updateUser(msg.from, msg.chat);
+  if (msg.chat.title) {
+    const hasUrl = Boolean(env.DENY_URL || 'true') && containsUrl(msg.text);
+    const tooLong = msg.text.length > Number(env.MAX_MSG_LENGTH || '1000');
     if (hasUrl || tooLong) {
-      ctx.deleteMessage(ctx.message.message_id);
+      ctx.deleteMessage(msg.message_id);
       return;
     }
   }
@@ -30,9 +30,9 @@ async function onText(ctx: TelegrafContext) {
   console.log(
     `----------- new msg [${ctx.from.username} - ${ctx.chat.title}] -------------`,
   );
-  console.log(ctx.message);
+  console.log(msg);
 
-  const matches = reg.exec(ctx.message.text);
+  const matches = reg.exec(msg.text);
 
   if (matches) {
     translatte(matches[2], { to: matches[1] })
@@ -41,19 +41,22 @@ async function onText(ctx: TelegrafContext) {
         ctx.reply(
           `${result.from.language.iso} => ${matches[1]}| ${result.text}`,
           {
-            reply_to_message_id: ctx.message.message_id,
+            reply_to_message_id: msg.message_id,
           },
         );
       })
       .catch(console.error);
   } else {
-    const lang = process.env.TO_TRANSLATE || 'en';
-    translatte(ctx.message.text, { to: lang })
+    const lang = env.TO_TRANSLATE || 'en';
+    translatte(msg.text, { to: lang })
       .then((result) => {
         console.log(result);
-        if (result.from.language.iso !== lang) {
+        if (
+          result.from.language.iso !== lang &&
+          result.text.toLowerCase() !== msg.text.toLowerCase()
+        ) {
           ctx.reply(`${result.from.language.iso} => ${lang}| ${result.text}`, {
-            reply_to_message_id: ctx.message.message_id,
+            reply_to_message_id: msg.message_id,
           });
         }
       })
@@ -61,7 +64,7 @@ async function onText(ctx: TelegrafContext) {
   }
 }
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(env.BOT_TOKEN);
 
 bot.use(async (ctx, next) => {
   const start = new Date();
