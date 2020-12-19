@@ -9,6 +9,7 @@ RUN npm install -g typescript
 
 RUN node_modules/typescript/bin/tsc -p .
 
-RUN npm run update-database
+RUN npm run update-database || true
 
-CMD [ "node", "./dist/bot.js" ]
+CMD ["node", "./dist/bot.js"]
+
