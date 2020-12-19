@@ -22,12 +22,9 @@
     "tslint-plugin-prettier": "^2.3.0"
   },
   "scripts": {
-    "test": "test",
     "lint": "tslint-config-prettier-check ./tslint.json",
     "tsstart": "ts-node src/bot",
     "start": "tslint-config-prettier-check ./tslint.json && tsc && node dist/bot.js",
-    "start1": "tsc && node dist/bot.js",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "build": "tsc",
     "add-migration": "ts-node ./node_modules/typeorm/cli.js migration:generate -n",
     "update-database": "ts-node ./node_modules/typeorm/cli.js migration:run"
