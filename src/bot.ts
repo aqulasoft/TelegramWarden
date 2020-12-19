@@ -27,7 +27,7 @@ async function onText(ctx: TelegrafContext) {
 async function handleMessage(ctx: TelegrafContext, isAdmin: Boolean) {
   const msg = ctx.message;
   await updateUser(msg.from, msg.chat);
-  if (msg.chat.title && !isAdmin) {
+  if (!isAdmin) {
     const hasUrl = Boolean(env.DENY_URL || 'true') && containsUrl(msg.text);
     const tooLong = msg.text.length > Number(env.MAX_MSG_LENGTH || '1000');
     if (hasUrl || tooLong) {
@@ -74,14 +74,18 @@ async function handleMessage(ctx: TelegrafContext, isAdmin: Boolean) {
 }
 async function checkIfAdmin(ctx: TelegrafContext) {
   return new Promise((resolve, reject) => {
-    ctx.getChatAdministrators().then((users: Array<ChatMember>) => {
-      users.forEach((user: ChatMember) => {
-        if (user.user.id === ctx.message.from.id) {
-          resolve(true);
-        }
-      });
-      resolve(false);
-    });
+    if (ctx.from.id === ctx.chat.id) resolve(true); // if not group chat.id == user.id
+    ctx
+      .getChatAdministrators()
+      .then((users: Array<ChatMember>) => {
+        users.forEach((user: ChatMember) => {
+          if (user.user.id === ctx.message.from.id) {
+            resolve(true);
+          }
+        });
+        resolve(false);
+      })
+      .catch(reject);
   });
 }
 
