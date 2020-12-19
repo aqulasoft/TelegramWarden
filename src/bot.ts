@@ -5,6 +5,9 @@ import { containsUrl } from './utils/utils';
 import { updateUser } from './db';
 import { TelegrafContext } from 'telegraf/typings/context';
 import 'reflect-metadata';
+import { User } from './entity/User';
+import { resolve } from 'path';
+import { ChatMember } from 'telegraf/typings/telegram-types';
 
 config();
 const env = process.env;
@@ -16,9 +19,15 @@ async function onPhoto(ctx: TelegrafContext) {
 }
 
 async function onText(ctx: TelegrafContext) {
+  await checkIfAdmin(ctx).then(async (isAdmin: Boolean) => {
+    await handleMessage(ctx, isAdmin);
+  });
+}
+
+async function handleMessage(ctx: TelegrafContext, isAdmin: Boolean) {
   const msg = ctx.message;
   await updateUser(msg.from, msg.chat);
-  if (msg.chat.title) {
+  if (msg.chat.title && !isAdmin) {
     const hasUrl = Boolean(env.DENY_URL || 'true') && containsUrl(msg.text);
     const tooLong = msg.text.length > Number(env.MAX_MSG_LENGTH || '1000');
     if (hasUrl || tooLong) {
@@ -62,6 +71,18 @@ async function onText(ctx: TelegrafContext) {
       })
       .catch(console.error);
   }
+}
+async function checkIfAdmin(ctx: TelegrafContext) {
+  return new Promise((resolve, reject) => {
+    ctx.getChatAdministrators().then((users: Array<ChatMember>) => {
+      users.forEach((user: ChatMember) => {
+        if (user.user.id === ctx.message.from.id) {
+          resolve(true);
+        }
+      });
+      resolve(false);
+    });
+  });
 }
 
 const bot = new Telegraf(env.BOT_TOKEN);
