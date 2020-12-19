@@ -3,26 +3,18 @@ import translatte from 'translatte';
 import { Telegraf } from 'telegraf';
 import { containsUrl } from './utils/utils';
 import { updateUser } from './db';
+import { TelegrafContext } from 'telegraf/typings/context';
 import 'reflect-metadata';
 
 config();
-
-const bot = new Telegraf(process.env.BOT_TOKEN);
-bot.use(async (ctx, next) => {
-  const start = new Date();
-  await next();
-  const ms = new Date().getTime() - start.getTime();
-  console.log('Response time: %sms', ms);
-});
-
 const reg = new RegExp(/^([^\s|]{1,5})\|\|(.+)/);
 
-bot.on('photo', (ctx) => {
+async function onPhoto(ctx: TelegrafContext) {
   if (ctx.message.chat.title && Boolean(process.env.DENY_PHOTO || 'true'))
     ctx.deleteMessage(ctx.message.message_id);
-});
+}
 
-bot.on('text', async (ctx) => {
+async function onText(ctx: TelegrafContext) {
   await updateUser(ctx.message.from, ctx.message.chat);
   if (ctx.message.chat.title) {
     const hasUrl =
@@ -67,6 +59,19 @@ bot.on('text', async (ctx) => {
       })
       .catch(console.error);
   }
+}
+
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+bot.use(async (ctx, next) => {
+  const start = new Date();
+  await next();
+  const ms = new Date().getTime() - start.getTime();
+  console.log('Response time: %sms', ms);
 });
+
+bot.on('photo', onPhoto);
+
+bot.on('text', onText);
 
 bot.launch();
