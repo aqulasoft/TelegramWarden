@@ -61,5 +61,5 @@ jobs:
               docker pull ${{ secrets.DOCKER_HUB_REPO }}:test
               docker stop twarden
               docker rm twarden 
-              docker run --restart always -d --name twarden -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' ${{ secrets.DOCKER_HUB_REPO }}:test
+              docker run --restart always -d --name twarden -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -e DB_CONNECTION='postgres' -e DB_HOST=${{ secrets.DEPLOY_SERVER_HOST }} ${{ secrets.DOCKER_HUB_REPO }}:test
               docker ps
