@@ -5,8 +5,6 @@ import { containsUrl } from './utils/utils';
 import { updateUser } from './db';
 import { TelegrafContext } from 'telegraf/typings/context';
 import 'reflect-metadata';
-import { User } from './entity/User';
-import { resolve } from 'path';
 import { ChatMember } from 'telegraf/typings/telegram-types';
 
 config();

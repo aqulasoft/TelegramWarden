@@ -30,7 +30,8 @@
     "build": "tsc",
     "add-migration": "npm run clean && tsc && ts-node ./node_modules/typeorm/cli.js migration:generate -n",
     "update-database": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "update-database-dev": "npm run clean && tsc && ts-node ./node_modules/typeorm/cli.js migration:run"
+    "update-database-dev": "npm run clean && tsc && ts-node ./node_modules/typeorm/cli.js migration:run",
+    "revert-database-dev": "npm run clean && tsc && ts-node ./node_modules/typeorm/cli.js migration:revert"
   },
   "repository": {
     "type": "git",

@@ -1,10 +1,10 @@
-import { Chat } from 'telegraf/typings/telegram-types';
+import { Chat as TChat } from 'telegraf/typings/telegram-types';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { UserGroup } from './UserGroup';
+import { UserChat } from './UserChat';
 
 @Entity()
-export class Group {
-  constructor(chat: Chat) {
+export class Chat {
+  constructor(chat: TChat) {
     if (chat) {
       this.id = String(chat.id);
       this.title = chat.title;
@@ -29,6 +29,6 @@ export class Group {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => UserGroup, (userGroup) => userGroup.group)
-  userGroups: UserGroup[];
+  @OneToMany(() => UserChat, (userChat) => userChat.chat)
+  userChats: UserChat[];
 }

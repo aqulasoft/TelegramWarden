@@ -1,6 +1,6 @@
 import { User as TUser } from 'telegraf/typings/telegram-types';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { UserGroup } from './UserGroup';
+import { UserChat } from './UserChat';
 
 @Entity()
 export class User {
@@ -33,6 +33,6 @@ export class User {
   @Column()
   isBot: boolean;
 
-  @OneToMany(() => UserGroup, (userGroup) => userGroup.user)
-  userGroups: UserGroup[];
+  @OneToMany(() => UserChat, (userChat) => userChat.user)
+  userChats: UserChat[];
 }
