@@ -43,7 +43,16 @@
 
 ```bash
 docker run --restart always -d --name twarden -p \
-    -e BOT_TOKEN='<BOT_TOKEN>' aqulasoft/twarden
+    -e BOT_TOKEN='<BOT_TOKEN>' \
+    -e DB_CONNECTION='<driver>' \
+    -e DB_HOST='<host>' \
+    -e DB_PORT='<port>' \
+    -e DB_USERNAME='<username>' \
+    -e DB_PASSWORD='<pass>' \
+    -e DB_DATABASE='<dbname>' \
+    -e DB_SYNCHRONIZE=true \
+    -e DB_LOGGING=true \
+    aqulasoft/twarden
 ```
 
 ## Configuration
@@ -53,3 +62,11 @@ docker run --restart always -d --name twarden -p \
 - `MAX_MSG_LENGTH`: Message max length (Default: 1000)
 - `DENY_URL`: Delete messages with links (Default: true)
 - `DENY_PHOTO`: Delete messages with photo (Default: true)
+- `DB_CONNECTION`: postgres
+- `DB_HOST`= Database Host
+- `DB_PORT`= Database Port
+- `DB_USERNAME`= Database username
+- `DB_PASSWORD`= Database password
+- `DB_DATABASE`= Database name
+- `DB_SYNCHRONIZE`= Sync Database on start (Boolean)
+- `DB_LOGGING`= Database logging (Boolean)
