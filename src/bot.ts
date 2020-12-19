@@ -2,11 +2,12 @@ import { config } from 'dotenv';
 import translatte from 'translatte';
 import { Telegraf } from 'telegraf';
 import { containsUrl } from './utils/utils';
+import { updateUser } from './db';
+import 'reflect-metadata';
 
 config();
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
 bot.use(async (ctx, next) => {
   const start = new Date();
   await next();
@@ -21,7 +22,8 @@ bot.on('photo', (ctx) => {
     ctx.deleteMessage(ctx.message.message_id);
 });
 
-bot.on('text', (ctx) => {
+bot.on('text', async (ctx) => {
+  await updateUser(ctx.message.from, ctx.message.chat);
   if (ctx.message.chat.title) {
     const hasUrl =
       Boolean(process.env.DENY_URL || 'true') && containsUrl(ctx.message.text);
@@ -39,7 +41,6 @@ bot.on('text', (ctx) => {
   console.log(ctx.message);
 
   const matches = reg.exec(ctx.message.text);
-  console.log(matches);
 
   if (matches) {
     translatte(matches[2], { to: matches[1] })
@@ -59,12 +60,9 @@ bot.on('text', (ctx) => {
       .then((result) => {
         console.log(result);
         if (result.from.language.iso !== lang) {
-          ctx.reply(
-            `${result.from.language.iso} => ${lang}| ${result.text}`,
-            {
-              reply_to_message_id: ctx.message.message_id,
-            },
-          );
+          ctx.reply(`${result.from.language.iso} => ${lang}| ${result.text}`, {
+            reply_to_message_id: ctx.message.message_id,
+          });
         }
       })
       .catch(console.error);
