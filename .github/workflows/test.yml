@@ -10,10 +10,6 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version'     
-        required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -58,19 +54,8 @@ jobs:
             port: ${{ secrets.DEPLOY_SERVER_PORT }}
             script: |
               docker ps
-              docker pull ${{ secrets.DOCKER_HUB_REPO }}
+              docker pull ${{ secrets.DOCKER_HUB_REPO }}:test
               docker stop twarden
               docker rm twarden 
-              docker run --restart always -d --name twarden \ 
-                -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \ 
-                -e TO_TRANSLATE='ru' \ 
-                -e DB_CONNECTION='postgres' \ 
-                -e DB_HOST= ${{ secrets.DEPLOY_SERVER_HOST }} \ 
-                -e DB_PORT='5432' \ 
-                -e DB_USERNAME= ${{ secrets.DB_USERNAME }} \ 
-                -e DB_PASSWORD= ${{ secrets.DB_PASSWORD }} \ 
-                -e DB_DATABASE= ${{ secrets.DB_DATABASE }} \ 
-                -e DB_SYNCHRONIZE='true' \ 
-                -e DB_LOGGING='false' \ 
-                ${{ secrets.DOCKER_HUB_REPO }}:test
+              docker run --restart always -d --name twarden -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} -e TO_TRANSLATE='ru' -e DB_CONNECTION='postgres' -e DB_HOST=${{ secrets.DEPLOY_SERVER_HOST }} -e DB_PORT=5432 -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e DB_SYNCHRONIZE=true -e DB_LOGGING=false ${{ secrets.DOCKER_HUB_REPO }}:test
               docker ps
