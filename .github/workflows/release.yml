@@ -77,11 +77,11 @@ jobs:
                 -e TO_TRANSLATE='ru' \
                 -e DB_CONNECTION='postgres' \
                 -e DB_HOST= ${{ secrets.DEPLOY_SERVER_HOST }} \
-                -e DB_PORT='5432' \
+                -e DB_PORT=5432 \
                 -e DB_USERNAME= ${{ secrets.DB_USERNAME }} \
                 -e DB_PASSWORD= ${{ secrets.DB_PASSWORD }} \
                 -e DB_DATABASE= ${{ secrets.DB_DATABASE }} \
-                -e DB_SYNCHRONIZE='true' \
-                -e DB_LOGGING='false' \
+                -e DB_SYNCHRONIZE=true \
+                -e DB_LOGGING=false \
                 ${{ secrets.DOCKER_HUB_REPO }}
               docker ps
