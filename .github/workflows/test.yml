@@ -58,7 +58,7 @@ jobs:
             port: ${{ secrets.DEPLOY_SERVER_PORT }}
             script: |
               docker ps
-              docker pull ${{ secrets.DOCKER_HUB_REPO }}
+              docker pull ${{ secrets.DOCKER_HUB_REPO }}:test
               docker stop twarden
               docker rm twarden 
               docker run --restart always -d --name twarden \ 
