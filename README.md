@@ -44,6 +44,7 @@
 ## Description
 Bot allows you:
 * Group:
+    * Delete messages containing any link
     * Delete messages with photos
     * Delete long read messages
 * Everywhere:
