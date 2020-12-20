@@ -35,9 +35,21 @@
 [telegram-shield]: https://img.shields.io/badge/telegram-aqulasoft-blue.svg
 [telegram-url]: https://t.me/aqulasoft
 
-# TelegramWarden
+# TelegramWarden @twardenbot
 
-### [TelegramWarden Docker Hub](https://hub.docker.com/repository/docker/aqulasoft/twarden)
+### Try on Telegram =>> [@twardenbot](https://t.me/twardenbot)
+
+###  Docker image on Docker Hub =>> [TelegramWarden](https://hub.docker.com/repository/docker/aqulasoft/twarden)
+
+## Description
+Bot allows you:
+* Group:
+    * Delete messages with photos
+    * Delete long read messages
+* Everywhere:
+    * Translate all messages to one language (can be set via -e TO_TRANSLATE='<lang_code>')
+    * Translate your message to any language (send message with the next structure ```<lang_code>||<your_message>```)
+```ru||hello```
 
 ## Run manually
 
@@ -54,6 +66,7 @@ docker run --restart always -d --name twarden -p \
     -e DB_LOGGING=true \
     aqulasoft/twarden
 ```
+
 
 ## Configuration
 
