@@ -1,6 +1,6 @@
 import { Chat as TChat } from 'telegraf/typings/telegram-types';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { UserChat } from './UserChat';
+import { ChatUser } from './ChatUser';
 
 @Entity()
 export class Chat {
@@ -29,6 +29,6 @@ export class Chat {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => UserChat, (userChat) => userChat.chat)
-  userChats: UserChat[];
+  @OneToMany(() => ChatUser, (chatUser) => chatUser.chat)
+  chatUsers: ChatUser[];
 }

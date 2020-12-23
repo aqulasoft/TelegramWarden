@@ -12,8 +12,10 @@ const env = process.env;
 const reg = new RegExp(/^([^\s|]{1,5})\|\|(.+)/);
 
 async function onPhoto(ctx: TelegrafContext) {
-  if (ctx.message.chat.title && Boolean(env.DENY_PHOTO || 'true'))
-    ctx.deleteMessage(ctx.message.message_id);
+  const msg = ctx.message;
+  if (msg.chat.title && Boolean(env.DENY_PHOTO || 'true'))
+    ctx.deleteMessage(msg.message_id);
+  await updateUser(msg.from, msg.chat, { hasViolation: true });
 }
 
 async function onText(ctx: TelegrafContext) {
@@ -22,17 +24,30 @@ async function onText(ctx: TelegrafContext) {
   });
 }
 
+async function onNewChatMembers(ctx: TelegrafContext) {
+  const msg = ctx.message;
+  msg.new_chat_members.forEach(async (user) => {
+    await updateUser(user, msg.chat);
+  });
+}
+
+async function onMemberLeft(ctx: TelegrafContext) {
+  const msg = ctx.message;
+  await updateUser(msg.from, msg.chat, { leftChat: true });
+}
+
 async function handleMessage(ctx: TelegrafContext, isAdmin: Boolean) {
   const msg = ctx.message;
-  await updateUser(msg.from, msg.chat);
   if (!isAdmin) {
     const hasUrl = Boolean(env.DENY_URL || 'true') && containsUrl(msg.text);
     const tooLong = msg.text.length > Number(env.MAX_MSG_LENGTH || '1000');
     if (hasUrl || tooLong) {
       ctx.deleteMessage(msg.message_id);
+      await updateUser(msg.from, msg.chat, { hasViolation: true });
       return;
     }
   }
+  await updateUser(msg.from, msg.chat, { newMessage: true });
 
   console.log(
     `----------- new msg [${ctx.from.username} - ${ctx.chat.title}] -------------`,
@@ -96,8 +111,14 @@ bot.use(async (ctx, next) => {
   console.log('Response time: %sms', ms);
 });
 
+bot.on('new_chat_members', onNewChatMembers);
+
+bot.on('left_chat_member', onMemberLeft);
+
 bot.on('photo', onPhoto);
 
 bot.on('text', onText);
+
+// bot.on('sticker', (ctx) => console.log(ctx.message));
 
 bot.launch();
