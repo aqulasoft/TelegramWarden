@@ -41,7 +41,8 @@ async function handleMessage(ctx: TelegrafContext, isAdmin: Boolean) {
   if (!isAdmin) {
     const hasUrl = Boolean(env.DENY_URL || 'true') && containsUrl(msg.text);
     const tooLong = msg.text.length > Number(env.MAX_MSG_LENGTH || '1000');
-    if (hasUrl || tooLong) {
+    const hasIllegalText = msg.text.indexOf('/language@banofbot') != -1;
+    if (hasUrl || tooLong || hasIllegalText) {
       ctx.deleteMessage(msg.message_id);
       await updateUser(msg.from, msg.chat, { hasViolation: true });
       return;
